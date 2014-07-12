@@ -1,2 +1,2 @@
 
-include "waldo-war"
+include "waldo-source-adds" "waldo-war"
