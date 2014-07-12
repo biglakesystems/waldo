@@ -1,0 +1,41 @@
+version = "1.0-SNAPSHOT"
+
+subprojects {
+    apply plugin: "java"
+
+    sourceCompatibility = 1.7
+    group = "com.biglakesystems.waldo"
+    version = "1.0-SNAPSHOT"
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    configurations.all {
+        all*.exclude group: 'commons-logging'
+    }
+
+    dependencies {
+
+        compile(
+                [group: "org.slf4j", name: "slf4j-api", version: slf4j_version],
+                [group: "commons-io", name: "commons-io", version: commons_io_version],
+                [group: "org.apache.commons", name: "commons-lang3", version: commons_lang_version]
+        )
+
+        runtime(
+                [group: "log4j", name: "log4j", version: log4j_version],
+                [group: "org.slf4j", name: "jcl-over-slf4j", version: slf4j_version],
+                [group: "org.slf4j", name: "slf4j-log4j12", version: slf4j_version]
+        )
+
+        testCompile(
+                [group: "junit", name: "junit", version: junit_version]
+        )
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}

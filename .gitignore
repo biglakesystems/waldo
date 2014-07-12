@@ -1,0 +1,6 @@
+*.ipr
+*.iml
+.gradle
+.idea
+build
+/classes
