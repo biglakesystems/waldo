@@ -31,6 +31,7 @@ subprojects {
         )
 
         testCompile(
+		project(":waldo-test"),
                 [group: "junit", name: "junit", version: junit_version]
         )
     }

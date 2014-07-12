@@ -1,0 +1,10 @@
+
+apply plugin: "java"
+
+dependencies {
+    runtime(
+            [group: "org.slf4j", name: "slf4j-simple", version: slf4j_version]
+    )
+}
+
+description = "Waldo Test Module"

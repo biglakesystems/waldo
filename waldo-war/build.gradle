@@ -7,7 +7,6 @@ dependencies {
             [group: "log4j", name: "log4j", version: "${log4j_version}"],
             [group: "org.springframework", name: "spring-webmvc", version: "${springframework_version}"],
             [group: "org.springframework.security", name: "spring-security-cas", version: spring_security_version],
-            [group: "org.jsoup", name: "jsoup", version: jsoup_version],
             [group: "org.springframework.security", name: "spring-security-config", version: spring_security_version],
             [group: "org.springframework.security", name: "spring-security-core", version: spring_security_version],
             [group: "org.springframework.security", name: "spring-security-web", version: spring_security_version],
