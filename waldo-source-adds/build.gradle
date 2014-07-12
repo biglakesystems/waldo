@@ -3,8 +3,10 @@ apply plugin: "java"
 dependencies {
 
     compile(
+            [group: "org.apache.httpcomponents", name: "httpclient", version: commons_httpcomponents_version],
+            [group: "joda-time", name: "joda-time", version: joda_time_version],
             [group: "org.jsoup", name: "jsoup", version: jsoup_version],
-            [group: "org.apache.httpcomponents", name: "httpclient", version: commons_httpcomponents_version]
+            [group: "org.springframework", name: "spring-web", version: springframework_version]
     )
 
 }

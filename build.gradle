@@ -31,8 +31,9 @@ subprojects {
         )
 
         testCompile(
-		project(":waldo-test"),
-                [group: "junit", name: "junit", version: junit_version]
+		        project(":waldo-test"),
+                [group: "junit", name: "junit", version: junit_version],
+                [group: "org.easymock", name: "easymock", version: easymock_version]
         )
     }
 }
