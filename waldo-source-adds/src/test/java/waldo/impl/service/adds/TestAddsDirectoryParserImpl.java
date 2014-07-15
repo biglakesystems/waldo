@@ -1,8 +1,6 @@
 package waldo.impl.service.adds;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -12,7 +10,6 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
-import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 /**
@@ -40,7 +37,7 @@ public class TestAddsDirectoryParserImpl
     }
 
     /**
-     * Test the implementation of {@link AddsDirectoryParser#parse(HttpEntity, URI)}.
+     * Test the implementation of {@link AddsDirectoryParser#parse(InputStream, String, URI)}.
      *
      * @throws Throwable on unexpected error.
      */
@@ -49,8 +46,6 @@ public class TestAddsDirectoryParserImpl
     {
         /* Request the data directory. */
         final URI baseUri = URI.create("http://www.aviationweather.gov/adds/dataserver_current/current/");
-        final HttpEntity mockEntity = createMock(HttpEntity.class);
-        final Header mockHeader = createMock(Header.class);
         final URL resource = getClass().getResource(String.format("%s_%s.html", getClass().getSimpleName(),
                 Thread.currentThread().getStackTrace()[1].getMethodName()));
         final InputStream content;
@@ -59,17 +54,9 @@ public class TestAddsDirectoryParserImpl
             content = new ByteArrayInputStream(IOUtils.toByteArray(stream));
         }
 
-        /* Should read the entity content type. */
-        expect(mockEntity.getContentType()).andReturn(mockHeader).atLeastOnce();
-        expect(mockHeader.getValue()).andReturn("text/html;charset=UTF-8");
-
-        /* Should read the entity content. */
-        expect(mockEntity.getContent()).andReturn(content).once();
-
         /* Run the test and verify expectations. */
-        replay(mockEntity, mockHeader);
         final AddsDirectoryParser instance = new AddsDirectoryParserImpl();
-        final List<AddsContent> files = instance.parse(mockEntity, baseUri);
+        final List<AddsContent> files = instance.parse(content, "text/html;charset=UTF-8", baseUri);
         assertEquals(16, files.size());
         assertEquals(new AddsContentImpl("aircraftreports.cache.csv",
                 URI.create("http://www.aviationweather.gov/adds/dataserver_current/current/aircraftreports.cache.csv"),
@@ -79,6 +66,5 @@ public class TestAddsDirectoryParserImpl
                 URI.create("http://www.aviationweather.gov/adds/dataserver_current/current/tafs.cache.xml.gz"),
                 new BigDecimal("269.6"),
                 AddsDirectoryParserImpl.s_modified.parseDateTime("Sat, 12 Jul 2014 03:20:05 GMT")), files.get(15));
-        verify(mockEntity, mockHeader);
     }
 }
