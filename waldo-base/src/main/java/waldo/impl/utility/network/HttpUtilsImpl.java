@@ -6,6 +6,8 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import waldo.utility.network.ContentCallback;
 import waldo.utility.network.HttpUtils;
 
@@ -31,6 +33,7 @@ import java.net.URI;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
+@Component
 class HttpUtilsImpl implements HttpUtils
 {
     private final HttpClient m_httpClient;
@@ -48,6 +51,7 @@ class HttpUtilsImpl implements HttpUtils
      *
      * @param httpClient the {@link HttpClient} component.
      */
+    @Autowired
     HttpUtilsImpl(final HttpClient httpClient)
     {
         super();

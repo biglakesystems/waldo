@@ -1,4 +1,4 @@
-package waldo.config;
+package waldo.config.app;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;

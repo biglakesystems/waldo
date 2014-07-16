@@ -11,6 +11,7 @@ import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -19,6 +20,9 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.util.ServletContextPropertyUtils;
+import waldo.Constants;
+import waldo.config.app.AppConfig;
+import waldo.config.web.WebConfig;
 
 import javax.servlet.*;
 import java.io.IOException;
@@ -61,7 +65,8 @@ public class WaldoInitializer implements WebApplicationInitializer
     {
         /* Load and merge the application configuration. */
         final Map<String, Object> configuration;
-        final String locations = StringUtils.trimToNull(context.getInitParameter("configurationPropertiesLocations"));
+        final String locations =
+                StringUtils.trimToNull(context.getInitParameter(Constants.Context.CONFIGURATION_LOCATIONS));
         if (null == locations)
         {
             configuration = Collections.emptyMap();
@@ -77,12 +82,12 @@ public class WaldoInitializer implements WebApplicationInitializer
 
         /* Initialize the root application context. */
         final ConfigurableWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
-        appContext.setConfigLocation("waldo.app.config");
+        appContext.setConfigLocation(ClassUtils.getPackageName(AppConfig.class));
         initApplicationContext(appContext, configuration);
 
         /* Initialize the web application context. */
         final ConfigurableWebApplicationContext webContext = new AnnotationConfigWebApplicationContext();
-        webContext.setConfigLocation("waldo.web.config");
+        webContext.setConfigLocation(ClassUtils.getPackageName(WebConfig.class));
         initApplicationContext(webContext, configuration);
 
         /* Add servlet context listeners. */
@@ -96,9 +101,9 @@ public class WaldoInitializer implements WebApplicationInitializer
         servlet.setAsyncSupported(true);
 
         /* Apply security filter to the dispatcher servlet. */
-//        final FilterRegistration.Dynamic security = context.addFilter(BeanIds.SPRING_SECURITY_FILTER_CHAIN,
-//                DelegatingFilterProxy.class);
-//        security.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+        //        final FilterRegistration.Dynamic security = context.addFilter(BeanIds.SPRING_SECURITY_FILTER_CHAIN,
+        //                DelegatingFilterProxy.class);
+        //        security.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
     }
 
     /**
@@ -124,7 +129,7 @@ public class WaldoInitializer implements WebApplicationInitializer
         for (final Map.Entry<String, Object> nextConfiguration : configuration.entrySet())
         {
             final String key = nextConfiguration.getKey();
-            if (key.startsWith("waldo.profile."))
+            if (key.startsWith(Constants.Profiles.PROFILE_CONFIGURATION_PREFIX))
             {
                 final String value = ObjectUtils.toString(nextConfiguration.getValue());
                 environment.addActiveProfile(value);
@@ -151,6 +156,7 @@ public class WaldoInitializer implements WebApplicationInitializer
         final Map<String, Object> result;
         try
         {
+            /* Create a pattern resolver and use it to locate all configuration resources. */
             final ResourcePatternResolver resolver = new ServletContextResourcePatternResolver(context);
             final List<Resource> allResources = new ArrayList<>();
             for (final String nextLocation : locations)
@@ -163,6 +169,7 @@ public class WaldoInitializer implements WebApplicationInitializer
                 }
             }
 
+            /* Load and merge the configuration. */
             final PropertiesFactoryBean factory = new PropertiesFactoryBean();
             factory.setLocations(allResources.toArray(new Resource[allResources.size()]));
             factory.afterPropertiesSet();
@@ -183,7 +190,9 @@ public class WaldoInitializer implements WebApplicationInitializer
         }
         catch (final IOException e)
         {
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format(
+                    "An error of type %s occurred while attempting to load the application configuration: %s",
+                    e.getClass().getName(), e.getMessage()), e);
         }
         return result;
     }

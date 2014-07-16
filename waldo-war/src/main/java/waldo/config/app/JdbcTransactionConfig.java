@@ -1,16 +1,21 @@
-package waldo.app.config;
+package waldo.config.app;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+import waldo.Constants;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 
 /**
- * {@link CommonDatabaseConfig} handles portions of the database configuration which are common to all environments.
+ * {@link JdbcTransactionConfig} handles portions of the transaction management configuration which apply only to
+ * environments where simple JDBC {@link Connection}-based transactions are applicable. This configuration is enabled
+ * when the {@link Constants.Profiles#TRANSACTION_JDBC} profile is active.
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -27,30 +32,31 @@ import javax.sql.DataSource;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
+@Profile(Constants.Profiles.TRANSACTION_JDBC)
 @SuppressWarnings("unused")
-class CommonDatabaseConfig
+class JdbcTransactionConfig
 {
-    private static final Logger LOG = LoggerFactory.getLogger(CommonDatabaseConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcTransactionConfig.class);
 
     /**
-     * Construct a {@link CommonDatabaseConfig} instance.
+     * Construct a {@link JdbcTransactionConfig} instance.
      */
-    CommonDatabaseConfig()
+    JdbcTransactionConfig()
     {
         super();
     }
 
     /**
-     * Create the JDBC template.
+     * Create the simple JDBC transaction manager.
      *
      * @param dataSource the application data source.
-     * @return {@link JdbcOperations} instance.
+     * @return {@link PlatformTransactionManager} instance.
      */
     @Bean
-    public JdbcOperations jdbcTemplate(final DataSource dataSource)
+    public PlatformTransactionManager transactionManager(final DataSource dataSource)
     {
-        final JdbcOperations result = new JdbcTemplate(dataSource);
-        LOG.info("Returning JDBC template {}.", result);
+        final PlatformTransactionManager result = new DataSourceTransactionManager(dataSource);
+        LOG.info("Returning JDBC transaction manager {}.", result);
         return result;
     }
 }

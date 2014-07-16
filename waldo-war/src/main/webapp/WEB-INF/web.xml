@@ -9,7 +9,7 @@
     <display-name>Waldo Project</display-name>
 
     <context-param>
-        <param-name>configurationPropertiesLocations</param-name>
+        <param-name>configurationLocations</param-name>
         <param-value>
             classpath:META-INF/config/waldo-default.properties,
             ${waldo.deployment_config_location},

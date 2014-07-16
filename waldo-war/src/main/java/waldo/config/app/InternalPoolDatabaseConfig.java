@@ -1,4 +1,4 @@
-package waldo.app.config;
+package waldo.config.app;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -8,11 +8,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
+import waldo.Constants;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 
 /**
- * {@link InternalPoolDatabaseConfig} ...
+ * {@link InternalPoolDatabaseConfig} handles portions of the database configuration which apply only to environments
+ * where the database is accessed by an internally managed connection pool. This configuration is enabled when the
+ * {@link Constants.Profiles#DATABASE_INTERNAL_POOL} profile is active.
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -29,7 +33,7 @@ import javax.sql.DataSource;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
-@Profile("waldo.profile.database.internal_pool")
+@Profile(Constants.Profiles.DATABASE_INTERNAL_POOL)
 @SuppressWarnings("unused")
 class InternalPoolDatabaseConfig
 {
@@ -67,7 +71,7 @@ class InternalPoolDatabaseConfig
 
         /* Create and return the data source. */
         final HikariDataSource result = new HikariDataSource(config);
-        LOG.debug("Returning internally managed DataSource {}.", result);
+        LOG.debug("Returning internally managed data source {}.", result);
         return result;
     }
 }
