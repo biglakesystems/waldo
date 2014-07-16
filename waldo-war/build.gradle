@@ -3,9 +3,11 @@ apply plugin: "war"
 dependencies {
 
     compile(
-            [group: "javax.servlet", name: "jstl", version: "${jstl_version}"],
-            [group: "log4j", name: "log4j", version: "${log4j_version}"],
-            [group: "org.springframework", name: "spring-webmvc", version: "${springframework_version}"],
+            [group: "com.zaxxer", name: "HikariCP", version: hikaricp_version],
+            [group: "javax.servlet", name: "jstl", version: jstl_version],
+            [group: "log4j", name: "log4j", version: log4j_version],
+            [group: "org.springframework", name: "spring-webmvc", version: springframework_version],
+            [group: "org.springframework", name: "spring-jdbc", version: springframework_version],
             [group: "org.springframework.security", name: "spring-security-cas", version: spring_security_version],
             [group: "org.springframework.security", name: "spring-security-config", version: spring_security_version],
             [group: "org.springframework.security", name: "spring-security-core", version: spring_security_version],
@@ -15,14 +17,14 @@ dependencies {
 
     runtime(
             project(":waldo-source-adds"),
-            [group: "org.apache.tiles", name: "tiles-jsp", version: "${tiles_version}"],
-            [group: "org.apache.tiles", name: "tiles-el", version: "${tiles_version}"],
-            [group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "${jackson_version}"],
+            [group: "org.apache.tiles", name: "tiles-jsp", version: tiles_version],
+            [group: "org.apache.tiles", name: "tiles-el", version: tiles_version],
+            [group: "com.fasterxml.jackson.core", name: "jackson-databind", version: jackson_version],
             [group: "commons-codec", name: "commons-codec", version: "1.9"]
     )
 
     providedCompile(
-            [group: "javax.servlet", name: "javax.servlet-api", version: "${servlet_api_version}"],
-            [group: "javax.servlet.jsp", name: "javax.servlet.jsp-api", version: "${jsp_api_version}"]
+            [group: "javax.servlet", name: "javax.servlet-api", version: servlet_api_version],
+            [group: "javax.servlet.jsp", name: "javax.servlet.jsp-api", version: jsp_api_version]
     )
 }

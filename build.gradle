@@ -27,7 +27,7 @@ subprojects {
         runtime(
                 [group: "log4j", name: "log4j", version: log4j_version],
                 [group: "org.slf4j", name: "jcl-over-slf4j", version: slf4j_version],
-                [group: "org.slf4j", name: "slf4j-log4j12", version: slf4j_version]
+                [group: "org.slf4j", name: "slf4j-jdk14", version: slf4j_version]
         )
 
         testCompile(
