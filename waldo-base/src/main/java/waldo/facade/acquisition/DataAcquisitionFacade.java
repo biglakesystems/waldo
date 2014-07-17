@@ -1,5 +1,7 @@
 package waldo.facade.acquisition;
 
+import java.util.Date;
+
 /**
  * {@link DataAcquisitionFacade} ...
  * <p/>
@@ -20,5 +22,5 @@ package waldo.facade.acquisition;
 @SuppressWarnings("unused")
 public interface DataAcquisitionFacade
 {
-    int doSomething();
+    Date doSomething();
 }

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import waldo.facade.acquisition.DataAcquisitionFacade;
 
+import java.util.Date;
+
 /**
  * {@link DataAcquisitionFacadeImpl} is the concrete implementation of the {@link DataAcquisitionFacade} interface.
  * <p/>
@@ -46,8 +48,8 @@ class DataAcquisitionFacadeImpl implements DataAcquisitionFacade
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public int doSomething()
+    public Date doSomething()
     {
-        return m_jdbcTemplate.queryForObject("select count(*) from gl_entrydetail", Integer.class);
+        return m_jdbcTemplate.queryForObject("select CURRENT_TIMESTAMP", Date.class);
     }
 }

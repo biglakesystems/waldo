@@ -1,2 +1,2 @@
 
-include "waldo-test", "waldo-base", "waldo-source-adds", "waldo-war"
+include "waldo-test", "waldo-base", "waldo-acquisition-adds", "waldo-war"

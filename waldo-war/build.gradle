@@ -17,9 +17,10 @@ dependencies {
     )
 
     runtime(
-            project(":waldo-source-adds"),
+            project(":waldo-acquisition-adds"),
             [group: "org.apache.tiles", name: "tiles-jsp", version: tiles_version],
             [group: "org.apache.tiles", name: "tiles-el", version: tiles_version],
+            [group: "org.postgresql", name: "postgresql", version: postgresql_version],
             [group: "com.fasterxml.jackson.core", name: "jackson-databind", version: jackson_version],
             [group: "commons-codec", name: "commons-codec", version: "1.9"]
     )

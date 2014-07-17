@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import waldo.facade.acquisition.DataAcquisitionFacade;
 
+import java.util.Date;
+
 /**
  * {@link Home} ...
  * <p/>
@@ -51,7 +53,7 @@ class Home
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get()
     {
-        final int count = m_acquisitionFacade.doSomething();
-        return new ModelAndView("full/Home", "model", count);
+        final Date date = m_acquisitionFacade.doSomething();
+        return new ModelAndView("full/Home", "model", date);
     }
 }
