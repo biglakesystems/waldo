@@ -119,7 +119,7 @@ public class WaldoInitializer implements WebApplicationInitializer
         /* Add a property source backed by the configuration map. */
         final ConfigurableEnvironment environment = context.getEnvironment();
         final MutablePropertySources sources = environment.getPropertySources();
-        sources.addFirst(new MapPropertySource("configuration", configuration));
+        sources.addFirst(new MapPropertySource(Constants.Context.CONFIGURATION, configuration));
         final PropertySourcesPlaceholderConfigurer placeholderConfigurer = new PropertySourcesPlaceholderConfigurer();
         placeholderConfigurer.setPropertySources(sources);
         context.addBeanFactoryPostProcessor(placeholderConfigurer);
@@ -129,7 +129,7 @@ public class WaldoInitializer implements WebApplicationInitializer
         for (final Map.Entry<String, Object> nextConfiguration : configuration.entrySet())
         {
             final String key = nextConfiguration.getKey();
-            if (key.startsWith(Constants.Profile.PROFILE_CONFIGURATION_PREFIX))
+            if (key.startsWith(Constants.Profiles.PROFILE_CONFIGURATION_PREFIX))
             {
                 final String value = ObjectUtils.toString(nextConfiguration.getValue());
                 environment.addActiveProfile(value);

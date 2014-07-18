@@ -3,6 +3,7 @@ package waldo;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 
+import javax.persistence.EntityManager;
 import java.sql.Connection;
 
 /**
@@ -31,6 +32,12 @@ public interface Constants
     interface Context
     {
         /**
+         * The name which is applied to the property source in which the merged application configuration is added to
+         * the Spring {@link Environment}.
+         */
+        String CONFIGURATION = "configuration";
+
+        /**
          * Context parameter in which a comma-delimited list of application configuration {@code .properties} files is
          * supplied. The merged content of these properties are added to the Spring application context as a
          * {@link PropertySource} for access either through the {@link Environment} or through property placeholders in
@@ -40,18 +47,24 @@ public interface Constants
     }
 
     /**
-     * {@link Profile} defines constants which correspond to the various Spring profiles which may be active during the
+     * {@link Profiles} defines constants which correspond to the various Spring profiles which may be active during the
      * execution of the application. These profiles generally allow certain subsystems, such as data access and
      * transaction management, to be configured differently based upon the type of container within which the
      * application is running.
      */
-    interface Profile
+    interface Profiles
     {
         /**
          * Profile which is active when the application should create its own internal database connection pool, rather
          * than having one supplied by the container via JNDI.
          */
         String DATABASE_INTERNAL_POOL = "waldo.profile.database.internal_pool";
+
+        /**
+         * Profile which is active when the application should create its own internal JPA persistence unit, rather
+         * than having one supplied by the container via JNDI.
+         */
+        String JPA_INTERNAL_PERSISTENCE_UNIT = "waldo.profile.jpa.internal_persistence_unit";
 
         /**
          * Prefix which indicates that a key/value in the merged application configuration identifies a profile which
@@ -62,13 +75,13 @@ public interface Constants
         String PROFILE_CONFIGURATION_PREFIX = "waldo.profile.";
 
         /**
-         * Profile which is active when simple JDBC {@link Connection}-based transaction management is applicable.
+         * Profile which is active when JPA {@link EntityManager}-based transaction management is applicable.
          */
-        String TRANSACTION_JDBC = "waldo.profile.transaction.jdbc";
+        String TRANSACTION_JPA = "waldo.profile.transaction.jpa";
     }
 
     /**
-     * {@link Profile} defines constants which correspond to various configuration items which control scheduled tasks,
+     * {@link Profiles} defines constants which correspond to various configuration items which control scheduled tasks,
      * and the thread pool in which they are executed.
      */
     interface Scheduling

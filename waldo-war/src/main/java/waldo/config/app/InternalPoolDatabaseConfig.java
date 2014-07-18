@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 /**
  * {@link InternalPoolDatabaseConfig} handles portions of the database configuration which apply only to environments
  * where the database is accessed by an internally managed connection pool. This configuration is enabled when the
- * {@link Constants.Profile#DATABASE_INTERNAL_POOL} profile is active.
+ * {@link Constants.Profiles#DATABASE_INTERNAL_POOL} profile is active.
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -31,7 +31,7 @@ import javax.sql.DataSource;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
-@org.springframework.context.annotation.Profile(Constants.Profile.DATABASE_INTERNAL_POOL)
+@org.springframework.context.annotation.Profile(Constants.Profiles.DATABASE_INTERNAL_POOL)
 @SuppressWarnings("unused")
 class InternalPoolDatabaseConfig
 {

@@ -4,17 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.context.annotation.Profile;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import waldo.Constants;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
- * {@link JdbcTransactionConfig} handles portions of the transaction management configuration which apply only to
- * environments where simple JDBC {@link Connection}-based transactions are applicable. This configuration is enabled
- * when the {@link Constants.Profile#TRANSACTION_JDBC} profile is active.
+ * {@link JpaTransactionConfig} handles portions of the transaction management configuration which apply only to
+ * environments where simple JPA {@link EntityManager}-based transactions are applicable. This configuration is enabled
+ * when the {@link Constants.Profiles#TRANSACTION_JPA} profile is active.
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -31,31 +32,31 @@ import java.sql.Connection;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
-@org.springframework.context.annotation.Profile(Constants.Profile.TRANSACTION_JDBC)
+@Profile(Constants.Profiles.TRANSACTION_JPA)
 @SuppressWarnings("unused")
-class JdbcTransactionConfig
+class JpaTransactionConfig
 {
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcTransactionConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JpaTransactionConfig.class);
 
     /**
-     * Construct a {@link JdbcTransactionConfig} instance.
+     * Construct a {@link JpaTransactionConfig} instance.
      */
-    JdbcTransactionConfig()
+    JpaTransactionConfig()
     {
         super();
     }
 
     /**
-     * Create the simple JDBC transaction manager.
+     * Create the simple JPA transaction manager.
      *
-     * @param dataSource the application data source.
+     * @param entityManagerFactory the {@link EntityManagerFactory} component.
      * @return {@link PlatformTransactionManager} instance.
      */
     @Bean
-    PlatformTransactionManager transactionManager(final DataSource dataSource)
+    PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory)
     {
-        final PlatformTransactionManager result = new DataSourceTransactionManager(dataSource);
-        LOG.info("Returning JDBC transaction manager {}.", result);
+        final PlatformTransactionManager result = new JpaTransactionManager(entityManagerFactory);
+        LOG.info("Returning JPA transaction manager {}.", result);
         return result;
     }
 }
