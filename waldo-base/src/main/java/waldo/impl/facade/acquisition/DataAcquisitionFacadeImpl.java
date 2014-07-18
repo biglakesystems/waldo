@@ -2,12 +2,14 @@ package waldo.impl.facade.acquisition;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import waldo.facade.acquisition.DataAcquisitionFacade;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * {@link DataAcquisitionFacadeImpl} is the concrete implementation of the {@link DataAcquisitionFacade} interface.
@@ -27,9 +29,10 @@ import java.util.Date;
  * specific language governing permissions and limitations under the License.
  */
 @Service
-class DataAcquisitionFacadeImpl implements DataAcquisitionFacade
+class DataAcquisitionFacadeImpl implements DataAcquisitionFacade, DataAcquisitionTasks
 {
     private final JdbcOperations m_jdbcTemplate;
+    private final AtomicInteger m_sequence = new AtomicInteger(0);
 
     /**
      * Construct a {@link DataAcquisitionFacadeImpl} instance.
@@ -48,8 +51,15 @@ class DataAcquisitionFacadeImpl implements DataAcquisitionFacade
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-    public Date doSomething()
+    public String doSomething()
     {
-        return m_jdbcTemplate.queryForObject("select CURRENT_TIMESTAMP", Date.class);
+        return String.format("%d: %s", m_sequence.get(),
+                m_jdbcTemplate.queryForObject("select CURRENT_TIMESTAMP", Date.class));
+    }
+
+    @Scheduled(fixedDelay = 60000L)
+    public void increment()
+    {
+        m_sequence.getAndIncrement();
     }
 }

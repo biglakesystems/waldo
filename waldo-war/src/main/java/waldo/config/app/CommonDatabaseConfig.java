@@ -47,7 +47,7 @@ class CommonDatabaseConfig
      * @return {@link JdbcOperations} instance.
      */
     @Bean
-    public JdbcOperations jdbcTemplate(final DataSource dataSource)
+    JdbcOperations jdbcTemplate(final DataSource dataSource)
     {
         final JdbcOperations result = new JdbcTemplate(dataSource);
         LOG.info("Returning JDBC template {}.", result);

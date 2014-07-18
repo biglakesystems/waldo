@@ -45,7 +45,7 @@ class NetworkConfig
      * @return {@link HttpClient} instance.
      */
     @Bean(destroyMethod = "close")
-    public HttpClient httpClient()
+    HttpClient httpClient()
     {
         final HttpClient result = HttpClients.createDefault();
         LOG.debug("Returning HttpClient component {}.", result);

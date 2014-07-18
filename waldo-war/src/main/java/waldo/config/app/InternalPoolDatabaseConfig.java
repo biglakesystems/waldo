@@ -51,7 +51,7 @@ class InternalPoolDatabaseConfig
      * @return {@link DataSource} instance.
      */
     @Bean(destroyMethod = "close")
-    public DataSource dataSource(final Environment environment) throws Throwable
+    DataSource dataSource(final Environment environment) throws Throwable
     {
         /* Build data source config from the merged application configuration. */
         final HikariConfig config = new HikariConfig();

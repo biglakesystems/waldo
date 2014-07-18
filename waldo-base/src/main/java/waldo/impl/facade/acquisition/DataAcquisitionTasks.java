@@ -1,7 +1,7 @@
-package waldo.facade.acquisition;
+package waldo.impl.facade.acquisition;
 
 /**
- * {@link DataAcquisitionFacade} ...
+ * {@link DataAcquisitionTasks} ...
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -17,8 +17,7 @@ package waldo.facade.acquisition;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-@SuppressWarnings("unused")
-public interface DataAcquisitionFacade
+interface DataAcquisitionTasks
 {
-    String doSomething();
+    void increment();
 }

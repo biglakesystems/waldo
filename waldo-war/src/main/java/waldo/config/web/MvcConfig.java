@@ -55,7 +55,7 @@ class MvcConfig extends WebMvcConfigurationSupport
      * @return {@link ViewResolver} instance.
      */
     @Bean
-    public ViewResolver viewResolver()
+    ViewResolver viewResolver()
     {
         final ViewResolver result = new TilesViewResolver();
         LOG.info("Returning Tiles view resolver {}.", result);
@@ -68,7 +68,7 @@ class MvcConfig extends WebMvcConfigurationSupport
      * @return {@link TilesConfigurer} instance.
      */
     @Bean
-    public TilesConfigurer tilesConfigurer()
+    TilesConfigurer tilesConfigurer()
     {
         final TilesConfigurer result = new TilesConfigurer();
         LOG.info("Returning Tiles configurer {}.", result);

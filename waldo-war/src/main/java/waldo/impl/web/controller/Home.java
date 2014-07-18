@@ -53,7 +53,7 @@ class Home
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public ModelAndView get()
     {
-        final Date date = m_acquisitionFacade.doSomething();
-        return new ModelAndView("full/Home", "model", date);
+        final String value = m_acquisitionFacade.doSomething();
+        return new ModelAndView("full/Home", "model", value);
     }
 }

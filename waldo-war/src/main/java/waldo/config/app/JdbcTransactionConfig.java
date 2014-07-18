@@ -52,7 +52,7 @@ class JdbcTransactionConfig
      * @return {@link PlatformTransactionManager} instance.
      */
     @Bean
-    public PlatformTransactionManager transactionManager(final DataSource dataSource)
+    PlatformTransactionManager transactionManager(final DataSource dataSource)
     {
         final PlatformTransactionManager result = new DataSourceTransactionManager(dataSource);
         LOG.info("Returning JDBC transaction manager {}.", result);
