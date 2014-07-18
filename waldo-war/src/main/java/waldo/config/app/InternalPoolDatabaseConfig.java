@@ -6,17 +6,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import waldo.Constants;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
 
 /**
  * {@link InternalPoolDatabaseConfig} handles portions of the database configuration which apply only to environments
  * where the database is accessed by an internally managed connection pool. This configuration is enabled when the
- * {@link Constants.Profiles#DATABASE_INTERNAL_POOL} profile is active.
+ * {@link Constants.Profile#DATABASE_INTERNAL_POOL} profile is active.
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -33,7 +31,7 @@ import java.sql.Connection;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
-@Profile(Constants.Profiles.DATABASE_INTERNAL_POOL)
+@org.springframework.context.annotation.Profile(Constants.Profile.DATABASE_INTERNAL_POOL)
 @SuppressWarnings("unused")
 class InternalPoolDatabaseConfig
 {

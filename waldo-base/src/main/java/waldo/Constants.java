@@ -40,12 +40,12 @@ public interface Constants
     }
 
     /**
-     * {@link Profiles} defines constants which correspond to the various Spring profiles which may be active during the
+     * {@link Profile} defines constants which correspond to the various Spring profiles which may be active during the
      * execution of the application. These profiles generally allow certain subsystems, such as data access and
      * transaction management, to be configured differently based upon the type of container within which the
      * application is running.
      */
-    interface Profiles
+    interface Profile
     {
         /**
          * Profile which is active when the application should create its own internal database connection pool, rather
@@ -65,5 +65,17 @@ public interface Constants
          * Profile which is active when simple JDBC {@link Connection}-based transaction management is applicable.
          */
         String TRANSACTION_JDBC = "waldo.profile.transaction.jdbc";
+    }
+
+    /**
+     * {@link Profile} defines constants which correspond to various configuration items which control scheduled tasks,
+     * and the thread pool in which they are executed.
+     */
+    interface Scheduling
+    {
+        /**
+         * Size of the internally managed thread pool in which scheduled tasks are executed.
+         */
+        String POOL_SIZE = "waldo.scheduling.thread_pool_size";
     }
 }

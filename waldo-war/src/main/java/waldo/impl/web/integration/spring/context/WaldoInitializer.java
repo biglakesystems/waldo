@@ -129,7 +129,7 @@ public class WaldoInitializer implements WebApplicationInitializer
         for (final Map.Entry<String, Object> nextConfiguration : configuration.entrySet())
         {
             final String key = nextConfiguration.getKey();
-            if (key.startsWith(Constants.Profiles.PROFILE_CONFIGURATION_PREFIX))
+            if (key.startsWith(Constants.Profile.PROFILE_CONFIGURATION_PREFIX))
             {
                 final String value = ObjectUtils.toString(nextConfiguration.getValue());
                 environment.addActiveProfile(value);

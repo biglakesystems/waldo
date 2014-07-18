@@ -4,17 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import waldo.Constants;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-
 /**
- * {@link JdbcTransactionConfig} handles portions of the transaction management configuration which apply only to
- * environments where simple JDBC {@link Connection}-based transactions are applicable. This configuration is enabled
- * when the {@link Constants.Profile#TRANSACTION_JDBC} profile is active.
+ * {@link SchedulingConfig} ...
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -31,31 +27,36 @@ import java.sql.Connection;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
-@org.springframework.context.annotation.Profile(Constants.Profile.TRANSACTION_JDBC)
+@EnableScheduling
 @SuppressWarnings("unused")
-class JdbcTransactionConfig
+class SchedulingConfig
 {
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcTransactionConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SchedulingConfig.class);
 
     /**
-     * Construct a {@link JdbcTransactionConfig} instance.
+     * Construct a {@link SchedulingConfig} instance.
      */
-    JdbcTransactionConfig()
+    SchedulingConfig()
     {
         super();
     }
 
     /**
-     * Create the simple JDBC transaction manager.
+     * Create the worker thread pool, which is shared by Spring scheduling and other third-party libraries which handle
+     * tasks on background threads.
      *
-     * @param dataSource the application data source.
-     * @return {@link PlatformTransactionManager} instance.
+     * @return {@link ThreadPoolTaskScheduler} instance.
      */
     @Bean
-    public PlatformTransactionManager transactionManager(final DataSource dataSource)
+    ThreadPoolTaskScheduler taskScheduler(final Environment environment)
     {
-        final PlatformTransactionManager result = new DataSourceTransactionManager(dataSource);
-        LOG.info("Returning JDBC transaction manager {}.", result);
+        /* Get the configured pool size and create the thread pool. */
+        final int poolSize = environment.getProperty(Constants.Scheduling.POOL_SIZE, Integer.class);
+        final ThreadPoolTaskScheduler result = new ThreadPoolTaskScheduler();
+        result.setDaemon(true);
+        result.setPoolSize(poolSize);
+        LOG.info("Returning scheduled task executor {} with {} thread(s) ({} processor(s) present.)", result,
+                poolSize, Runtime.getRuntime().availableProcessors());
         return result;
     }
 }
