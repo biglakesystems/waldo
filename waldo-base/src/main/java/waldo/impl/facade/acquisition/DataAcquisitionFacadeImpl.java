@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import waldo.entity.Observation;
 import waldo.facade.acquisition.DataAcquisitionFacade;
 
 import javax.persistence.EntityManager;
@@ -52,7 +53,8 @@ class DataAcquisitionFacadeImpl implements DataAcquisitionFacade, DataAcquisitio
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public String doSomething()
     {
-        return String.format("%d: %s", m_sequence.get(), "HelloBrain");
+        final Observation observation = m_entityManager.find(Observation.class, 1L);
+        return String.format("%d: %s", m_sequence.get(), observation.getHash());
     }
 
     @Scheduled(fixedDelay = 60000L)

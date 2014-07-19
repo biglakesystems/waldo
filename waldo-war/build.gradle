@@ -6,7 +6,6 @@ dependencies {
             project(":waldo-base"),
             [group: "com.zaxxer", name: "HikariCP", version: hikaricp_version],
             [group: "javax.servlet", name: "jstl", version: jstl_version],
-            [group: "log4j", name: "log4j", version: log4j_version],
             [group: "org.springframework", name: "spring-webmvc", version: springframework_version],
             [group: "org.springframework", name: "spring-jdbc", version: springframework_version],
             [group: "org.springframework", name: "spring-orm", version: springframework_version],
