@@ -4,7 +4,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
@@ -49,12 +48,25 @@ public class WaldoInitializer implements WebApplicationInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger(WaldoInitializer.class);
 
+    private final PropertiesLoader m_propertiesLoader;
+
     /**
      * Construct a {@link WaldoInitializer} instance.
      */
     public WaldoInitializer()
     {
+        this(PropertiesLoader.INSTANCE);
+    }
+
+    /**
+     * Construct a {@link WaldoInitializer} instance.
+     *
+     * @param propertiesLoader the {@link PropertiesLoader} component.
+     */
+    WaldoInitializer(final PropertiesLoader propertiesLoader)
+    {
         super();
+        m_propertiesLoader = propertiesLoader;
     }
 
     /**
@@ -79,27 +91,6 @@ public class WaldoInitializer implements WebApplicationInitializer
             configuration = loadConfiguration(context, patterns);
             LOG.info("Loaded {} configuration key(s) from locations {}.", configuration.size(), patterns);
         }
-
-        final StringBuilder builder = new StringBuilder();
-        for (final Map.Entry<String, String> nextEntry : System.getenv().entrySet())
-        {
-            if (builder.length() > 0)
-            {
-                builder.append('\n');
-            }
-            builder.append("  Env: [").append(nextEntry.getKey()).append("] => [").append(nextEntry.getValue()).append(']');
-        }
-        for (final Map.Entry<Object, Object> nextEntry : System.getProperties().entrySet())
-        {
-            final String key = (String) nextEntry.getKey();
-            final String value = (String) nextEntry.getValue();
-            if (builder.length() > 0)
-            {
-                builder.append('\n');
-            }
-            builder.append("  System: [").append(key).append("] => [").append(value).append(']');
-        }
-        LOG.info("Configuration:\n{}", builder.toString());
 
         /* Initialize the root application context. */
         final ConfigurableWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
@@ -191,10 +182,7 @@ public class WaldoInitializer implements WebApplicationInitializer
             }
 
             /* Load and merge the configuration. */
-            final PropertiesFactoryBean factory = new PropertiesFactoryBean();
-            factory.setLocations(allResources.toArray(new Resource[allResources.size()]));
-            factory.afterPropertiesSet();
-            final Properties properties = factory.getObject();
+            final Properties properties = m_propertiesLoader.load(allResources);
             result = Collections.unmodifiableMap(new HashMap<String, Object>((Map) properties));
             if (LOG.isInfoEnabled())
             {

@@ -1,0 +1,52 @@
+{
+    "Description": "Create a single-node t1.micro instance with RDS database.",
+    "Resources": {
+        "WaldoWebSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Enable HTTP access via port 80",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp" : "0.0.0.0/0"
+                    }
+                ]
+            }
+        },
+        "WaldoDBSecurityByCIDRIPGroup": {
+            "Type": "AWS::RDS::DBSecurityGroup",
+            "Properties": {
+                "GroupDescription": "Ingress for CIDRIP",
+                "DBSecurityGroupIngress": {
+                    "CIDRIP": "192.168.0.0/32"
+                }
+            }
+        },
+        "WaldoDBSecurityByEC2SecurityGroup": {
+            "Type": "AWS::RDS::DBSecurityGroup",
+            "Properties": {
+                "DBSecurityGroupIngress": {
+                    "GroupDescription": "Ingress for Web Server",
+                    "EC2SecrutiyGroupName": { "Ref": "WaldoWebSecurityGroup" }
+                }
+            }
+        },
+        "WaldoDB": {
+            "Type": "AWS::RDS::DBInstance",
+            "DeletionPolicy": "Snapshot",
+            "Properties": {
+                "DBSecurityGroups": [
+                    { "Ref": "WaldoDBSecurityByEC2SecurityGroup" },
+                    { "Ref": "WaldoDBSecurityByCIDRIPGroup" }
+                ],
+                "AllocatedStorage": "5",
+                "DBInstanceClass": "db.t1.micro",
+                "Engine": "PostgreSQL",
+                "MasterUsername": "waldoapp",
+                "MasterUserPassword": "(g-}P:%xM\\u9VSM"
+            }
+        }
+    }
+}
