@@ -1,10 +1,19 @@
 package waldo.impl.web.controller;
 
+import org.apache.commons.io.IOUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * {@link Status} ...
@@ -40,5 +49,17 @@ class Status
     public String get()
     {
         return "{\"status\": \"OK\"}";
+    }
+
+    @RequestMapping(value = "/logs", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void getLogs(final HttpServletResponse response) throws Throwable
+    {
+        final File file = new File("/var/log/tomcat7/catalina.out");
+        try (final Reader reader = new FileReader(file))
+        {
+            final Writer writer = response.getWriter();
+            IOUtils.copy(reader, writer);
+        }
     }
 }

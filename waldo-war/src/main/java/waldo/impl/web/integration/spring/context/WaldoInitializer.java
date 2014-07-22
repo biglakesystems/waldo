@@ -80,6 +80,27 @@ public class WaldoInitializer implements WebApplicationInitializer
             LOG.info("Loaded {} configuration key(s) from locations {}.", configuration.size(), patterns);
         }
 
+        final StringBuilder builder = new StringBuilder();
+        for (final Map.Entry<String, String> nextEntry : System.getenv().entrySet())
+        {
+            if (builder.length() > 0)
+            {
+                builder.append('\n');
+            }
+            builder.append("  Env: [").append(nextEntry.getKey()).append("] => [").append(nextEntry.getValue()).append(']');
+        }
+        for (final Map.Entry<Object, Object> nextEntry : System.getProperties().entrySet())
+        {
+            final String key = (String) nextEntry.getKey();
+            final String value = (String) nextEntry.getValue();
+            if (builder.length() > 0)
+            {
+                builder.append('\n');
+            }
+            builder.append("  System: [").append(key).append("] => [").append(value).append(']');
+        }
+        LOG.info("Configuration:\n{}", builder.toString());
+
         /* Initialize the root application context. */
         final ConfigurableWebApplicationContext appContext = new AnnotationConfigWebApplicationContext();
         appContext.setConfigLocation(ClassUtils.getPackageName(AppConfig.class));
