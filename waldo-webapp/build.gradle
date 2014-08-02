@@ -1,5 +1,9 @@
 apply plugin: "war"
 
+configurations {
+    runtimeWar
+}
+
 dependencies {
 
     compile(
@@ -30,4 +34,14 @@ dependencies {
             [group: "javax.servlet", name: "javax.servlet-api", version: servlet_api_version],
             [group: "javax.servlet.jsp", name: "javax.servlet.jsp-api", version: jsp_api_version]
     )
+
+    runtimeWar(
+            [group: "org.slf4j", name: "slf4j-jdk14", version: slf4j_version]
+    )
 }
+
+war {
+    classpath configurations.runtimeWar
+}
+
+description = "Waldo Webapp Module"
