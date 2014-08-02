@@ -1,0 +1,19 @@
+apply plugin: "java"
+
+dependencies {
+
+    compile(
+            project(":bls-common"),
+            [group: "org.springframework", name: "spring-context", version: springframework_version ]
+    )
+
+    runtime(
+    )
+
+    /* Note: uses emulated "provided" scope (see ../build.gradle.) */
+    provided(
+
+    )
+}
+
+description = "BLS Common Integration Module"

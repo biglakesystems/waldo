@@ -1,0 +1,18 @@
+apply plugin: "java"
+
+dependencies {
+
+    compile(
+
+    )
+
+    runtime(
+    )
+
+    /* Note: uses emulated "provided" scope (see ../build.gradle.) */
+    provided(
+
+    )
+}
+
+description = "BLS Common Module"

@@ -1,0 +1,21 @@
+apply plugin: "java"
+
+dependencies {
+
+    compile(
+            project(":bls-common"),
+            project(":bls-common-integration")
+    )
+
+    runtime(
+
+    )
+
+    /* Note: uses emulated "provided" scope (see ../build.gradle.) */
+    provided(
+            [group: "javax.servlet", name: "javax.servlet-api", version: servlet_api_version],
+            [group: "org.springframework", name: "spring-webmvc", version: springframework_version]
+    )
+}
+
+description = "BLS Common Web Module"
