@@ -4,10 +4,13 @@ import com.biglakesystems.common.Assert;
 import com.biglakesystems.common.spring.PropertySourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.PropertySources;
+import org.springframework.core.io.Resource;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -36,12 +39,25 @@ public class PropertySourceUtilsImpl implements PropertySourceUtils
      */
     public static final PropertySourceUtils INSTANCE = new PropertySourceUtilsImpl();
 
+    private final StaticHelper m_staticHelper;
+
     /**
      * Construct a {@link PropertySourceUtilsImpl} instance.
      */
     PropertySourceUtilsImpl()
     {
+        this(StaticHelper.INSTANCE);
+    }
+
+    /**
+     * Construct a {@link PropertySourceUtilsImpl} instance.
+     *
+     * @param staticHelper the {@link StaticHelper} component
+     */
+    PropertySourceUtilsImpl(final StaticHelper staticHelper)
+    {
         super();
+        Assert.argumentNotNull("staticHelper", m_staticHelper = staticHelper);
     }
 
     /**
@@ -69,6 +85,30 @@ public class PropertySourceUtilsImpl implements PropertySourceUtils
             }
         }
         LOG.info("Returning {} property name(s) from property sources {}: {}", result.size(), sources, result);
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Properties loadProperties(final List<Resource> resources)
+    {
+        final Properties result;
+        final PropertiesFactoryBean factory = m_staticHelper.PropertiesFactoryBean_new();
+        factory.setLocations(resources.toArray(new Resource[resources.size()]));
+        try
+        {
+            factory.afterPropertiesSet();
+            result = factory.getObject();
+        }
+        catch (final IOException e)
+        {
+            throw new RuntimeException(String.format(
+                    "An error of type %s occurred while attempting to load properties from resource(s) %s: %s",
+                    e.getClass().getName(), resources, e.getMessage()), e);
+        }
+        LOG.debug("Returning {} properties loaded from resource(s) {}.", result.size(), resources);
         return result;
     }
 }

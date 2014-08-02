@@ -2,7 +2,10 @@ package com.biglakesystems.common.spring;
 
 import com.biglakesystems.common.impl.spring.PropertySourceUtilsImpl;
 import org.springframework.core.env.PropertySources;
+import org.springframework.core.io.Resource;
 
+import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -38,4 +41,15 @@ public interface PropertySourceUtils
      * @return {@link Set} of {@link String} property names.
      */
     Set<String> getEnumerablePropertyNames(PropertySources sources);
+
+
+    /**
+     * Load and merge the contents of zero or more {@code .properties} resources. Files are loaded in order; same-named
+     * properties in a resource at a <em>higher</em> index in the input array will override properties at a
+     * <em>lower</em> index in the array.
+     *
+     * @param resources the resources to merge.
+     * @return {@link Properties} instance; never {@code null}.
+     */
+    Properties loadProperties(List<Resource> resources);
 }

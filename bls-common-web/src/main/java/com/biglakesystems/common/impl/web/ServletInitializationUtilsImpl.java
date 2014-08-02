@@ -41,7 +41,6 @@ public class ServletInitializationUtilsImpl implements ServletInitializationUtil
      */
     public static final ServletInitializationUtils INSTANCE = new ServletInitializationUtilsImpl();
 
-    private final PropertiesLoader m_propertiesLoader;
     private final PropertySourceUtils m_sourceUtils;
     private final StaticHelper m_staticHelper;
 
@@ -50,21 +49,18 @@ public class ServletInitializationUtilsImpl implements ServletInitializationUtil
      */
     ServletInitializationUtilsImpl()
     {
-        this(PropertySourceUtils.INSTANCE, PropertiesLoader.INSTANCE, StaticHelper.INSTANCE);
+        this(PropertySourceUtils.INSTANCE, StaticHelper.INSTANCE);
     }
 
     /**
      * Construct a {@link ServletInitializationUtilsImpl} instance.
      *
      * @param sourceUtils the {@link PropertySourceUtils} utilities.
-     * @param propertiesLoader the {@link PropertiesLoader} component.
      * @param staticHelper the {@link StaticHelper} component.
      */
-    ServletInitializationUtilsImpl(final PropertySourceUtils sourceUtils, final PropertiesLoader propertiesLoader,
-                                   final StaticHelper staticHelper)
+    ServletInitializationUtilsImpl(final PropertySourceUtils sourceUtils, final StaticHelper staticHelper)
     {
         super();
-        Assert.argumentNotNull("propertiesLoader", m_propertiesLoader = propertiesLoader);
         Assert.argumentNotNull("sourceUtils", m_sourceUtils = sourceUtils);
         Assert.argumentNotNull("staticHelper", m_staticHelper = staticHelper);
     }
@@ -109,7 +105,7 @@ public class ServletInitializationUtilsImpl implements ServletInitializationUtil
             }
 
             /* Load and merge the configuration. */
-            final Properties properties = m_propertiesLoader.load(allResources);
+            final Properties properties = m_sourceUtils.loadProperties(allResources);
             result = Collections.unmodifiableMap(new HashMap<String, Object>((Map) properties));
             if (LOG.isInfoEnabled())
             {

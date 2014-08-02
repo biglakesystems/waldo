@@ -33,7 +33,6 @@ import static org.junit.Assert.*;
  */
 public class TestServletInitializationUtilsImpl
 {
-    private final PropertiesLoader m_mockPropertiesLoader;
     private final PropertySourceUtils m_mockSourceUtils;
     private final StaticHelper m_mockStaticHelper;
 
@@ -43,7 +42,6 @@ public class TestServletInitializationUtilsImpl
     public TestServletInitializationUtilsImpl()
     {
         super();
-        m_mockPropertiesLoader = createMock(PropertiesLoader.class);
         m_mockSourceUtils = createMock(PropertySourceUtils.class);
         m_mockStaticHelper = createMock(StaticHelper.class);
     }
@@ -51,7 +49,7 @@ public class TestServletInitializationUtilsImpl
     @Before
     public void resetCommonMocks()
     {
-        reset(m_mockPropertiesLoader, m_mockSourceUtils, m_mockStaticHelper);
+        reset(m_mockSourceUtils, m_mockStaticHelper);
     }
 
     /**
@@ -73,7 +71,7 @@ public class TestServletInitializationUtilsImpl
         replayCommonMocks();
         replay(mockContext, mockEnvironment, mockSources);
         final ServletInitializationUtils instance =
-                new ServletInitializationUtilsImpl(m_mockSourceUtils, m_mockPropertiesLoader, m_mockStaticHelper);
+                new ServletInitializationUtilsImpl(m_mockSourceUtils, m_mockStaticHelper);
         assertSame(mockEnvironment, instance.loadBootstrapConfig(mockContext));
         verifyCommonMocks();
         verify(mockContext, mockEnvironment, mockSources);
@@ -114,7 +112,7 @@ public class TestServletInitializationUtilsImpl
                 .andReturn(new Resource[]{ mockResource3_1 }).atLeastOnce();
 
         /* Should load properties from the resources. */
-        expect(m_mockPropertiesLoader.load(eq(
+        expect(m_mockSourceUtils.loadProperties(eq(
                 Arrays.asList(mockResource1_1, mockResource2_1, mockResource2_2, mockResource3_1))))
                 .andReturn(properties)
                 .atLeastOnce();
@@ -123,7 +121,7 @@ public class TestServletInitializationUtilsImpl
         replayCommonMocks();
         replay(mockContext, mockResolver, mockResource1_1, mockResource2_1, mockResource2_2, mockResource3_1);
         final ServletInitializationUtils instance = new ServletInitializationUtilsImpl(m_mockSourceUtils,
-                m_mockPropertiesLoader, m_mockStaticHelper);
+                m_mockStaticHelper);
         final Map<String, Object> configuration = instance.loadMergedConfiguration(mockContext, mockResolver,
                 "location1, location2 , \n location3");
         assertEquals(1, configuration.size());
@@ -134,11 +132,11 @@ public class TestServletInitializationUtilsImpl
 
     private void replayCommonMocks()
     {
-        replay(m_mockPropertiesLoader, m_mockSourceUtils, m_mockStaticHelper);
+        replay(m_mockSourceUtils, m_mockStaticHelper);
     }
 
     private void verifyCommonMocks()
     {
-        verify(m_mockPropertiesLoader, m_mockSourceUtils, m_mockStaticHelper);
+        verify(m_mockSourceUtils, m_mockStaticHelper);
     }
 }

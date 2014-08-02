@@ -1,6 +1,5 @@
 package com.biglakesystems.common.impl.web;
 
-import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.web.context.support.StandardServletEnvironment;
 import org.springframework.web.util.ServletContextPropertyUtils;
 
@@ -33,13 +32,6 @@ interface StaticHelper
     {
         /** {@inheritDoc} */
         @Override
-        public PropertiesFactoryBean PropertiesFactoryBean_new()
-        {
-            return new PropertiesFactoryBean();
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public String ServletContextPropertyUtils_resolvePlaceholders(final String value, final ServletContext context,
                                                                       final boolean required)
         {
@@ -53,11 +45,6 @@ interface StaticHelper
             return new StandardServletEnvironment();
         }
     };
-
-    /**
-     * @see PropertiesFactoryBean#PropertiesFactoryBean()
-     */
-    PropertiesFactoryBean PropertiesFactoryBean_new();
 
     /**
      * @see ServletContextPropertyUtils#resolvePlaceholders(String, ServletContext, boolean)
