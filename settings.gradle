@@ -1,2 +1,2 @@
 
-include "waldo-test", "waldo-base", "waldo-acquisition-adds", "waldo-war"
+include "bls-common", "bls-common-integration", "bls-common-web", "waldo-test", "waldo-base", "waldo-acquisition-adds", "waldo-webapp"
