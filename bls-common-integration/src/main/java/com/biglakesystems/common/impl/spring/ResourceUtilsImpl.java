@@ -1,6 +1,8 @@
 package com.biglakesystems.common.impl.spring;
 
 import com.biglakesystems.common.Assert;
+import com.biglakesystems.common.impl.aws.S3ResourceLoader;
+import com.biglakesystems.common.security.CredentialsSource;
 import com.biglakesystems.common.spring.DispatchingResourceLoaderBuilder;
 import com.biglakesystems.common.spring.ResourceUtils;
 import org.slf4j.Logger;
@@ -53,6 +55,19 @@ public class ResourceUtilsImpl implements ResourceUtils
         final DispatchingResourceLoaderBuilder result =
                 new DispatchingResourceLoaderBuilderImpl(classLoader, defaultLoader);
         LOG.debug("Returning resource loader builder {}.", result);
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResourceLoader createAmazonS3ResourceLoader(final ClassLoader classLoader, final CredentialsSource source)
+    {
+        Assert.argumentNotNull("classLoader", classLoader);
+        Assert.argumentNotNull("source", source);
+        final ResourceLoader result = new S3ResourceLoader(source, classLoader);
+        LOG.debug("Returning Amazon S3 resource loader {} with credentials source {}.", result, source);
         return result;
     }
 }

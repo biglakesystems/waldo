@@ -1,5 +1,6 @@
 package com.biglakesystems.common.impl.spring;
 
+import com.biglakesystems.common.impl.StaticHelper;
 import com.biglakesystems.common.spring.PropertySourceUtils;
 import org.easymock.IAnswer;
 import org.junit.Before;

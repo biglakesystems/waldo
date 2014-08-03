@@ -1,10 +1,12 @@
 package com.biglakesystems.common.spring;
 
 import com.biglakesystems.common.impl.spring.ResourceUtilsImpl;
+import com.biglakesystems.common.security.CredentialsSource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
- * {@link ResourceUtils} ...
+ * {@link ResourceUtils} defines the public interface to an object which provides utility functionality related to
+ * Spring resources and resource loaders, including custom resource loader implementations.
  * <p/>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
@@ -38,4 +40,21 @@ public interface ResourceUtils
      */
     DispatchingResourceLoaderBuilder buildDispatchingResourceLoader(ClassLoader classLoader,
                                                                     ResourceLoader defaultLoader);
+
+    /**
+     * Get a resource loader which is capable of loading resources from Amazon S3. Credentials for accessing resources
+     * will be obtained from a given {@link CredentialsSource}. Credentials are obtained by passing the S3 bucket name
+     * to the credentials source.
+     * <p/>
+     * The resource loader location string format is as follows::
+     * <p/>
+     * <code>/<em>bucket-name</em>/path/to/file.txt</code>
+     * <p/>
+     * Where <em>bucket-name</em> is the name of the Amazon S3 bucket.
+     *
+     * @param classLoader the class loader to be returned by {@link ResourceLoader#getClassLoader()}.
+     * @param source the credentials source.
+     * @return {@link ResourceLoader} instance.
+     */
+    ResourceLoader createAmazonS3ResourceLoader(ClassLoader classLoader, CredentialsSource source);
 }

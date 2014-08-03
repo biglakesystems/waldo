@@ -1,6 +1,9 @@
-package com.biglakesystems.common.impl.spring;
+package com.biglakesystems.common.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+
+import java.io.Closeable;
 
 /**
  * {@link StaticHelper} defines the public interface to an object which provides wrapper methods for static methods
@@ -17,7 +20,7 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-interface StaticHelper
+public interface StaticHelper
 {
     /**
      * Runtime implementation.
@@ -28,11 +31,25 @@ interface StaticHelper
          * {@inheritDoc}
          */
         @Override
+        public void IOUtils_closeQuietly(final Closeable closeable)
+        {
+            IOUtils.closeQuietly(closeable);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public PropertiesFactoryBean PropertiesFactoryBean_new()
         {
             return new PropertiesFactoryBean();
         }
     };
+
+    /**
+     * @see IOUtils#closeQuietly(Closeable)
+     */
+    void IOUtils_closeQuietly(Closeable closeable);
 
     /**
      * @see PropertiesFactoryBean#PropertiesFactoryBean()

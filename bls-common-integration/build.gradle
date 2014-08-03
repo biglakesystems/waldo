@@ -4,7 +4,8 @@ dependencies {
 
     compile(
             project(":bls-common"),
-            [group: "org.springframework", name: "spring-context", version: springframework_version ]
+            [group: "com.amazonaws", name: "aws-java-sdk", version: aws_version],
+            [group: "org.springframework", name: "spring-context", version: springframework_version]
     )
 
     runtime(

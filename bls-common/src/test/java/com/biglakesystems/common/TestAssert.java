@@ -29,6 +29,35 @@ public class TestAssert
     }
 
     /**
+     * Test the implementation of {@link Assert#argumentNotBlank(String, String)}.
+     */
+    @Test
+    public void testArgumentNotBlank()
+    {
+        Assert.argumentNotBlank("testing", "nonBlankValue");
+        try
+        {
+            Assert.argumentNotBlank("testing", null);
+            fail("Invocation with null argument did not throw.");
+        }
+        catch (final IllegalArgumentException e)
+        {
+            /* Good. */
+            assertTrue(e.getMessage().contains("testing"));
+        }
+        try
+        {
+            Assert.argumentNotBlank("testing", "   \t\n  ");
+            fail("Invocation with blank argument did not throw.");
+        }
+        catch (final IllegalArgumentException e)
+        {
+            /* Good. */
+            assertTrue(e.getMessage().contains("testing"));
+        }
+    }
+
+    /**
      * Test the implementation of {@link Assert#argumentNotNull(String, Object)}.
      */
     @Test

@@ -1,5 +1,8 @@
 package waldo.impl.web.integration.spring.context;
 
+import com.biglakesystems.common.Assert;
+import com.biglakesystems.common.spring.ResourceUtils;
+import com.biglakesystems.common.web.ServletInitializationUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -8,7 +11,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.io.Resource;
+import org.springframework.core.env.PropertyResolver;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.WebApplicationInitializer;
@@ -16,30 +20,29 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.context.support.ServletContextResourceLoader;
 import org.springframework.web.context.support.ServletContextResourcePatternResolver;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.util.ServletContextPropertyUtils;
 import waldo.Constants;
 import waldo.config.app.AppConfig;
 import waldo.config.web.WebConfig;
 
 import javax.servlet.*;
-import java.io.IOException;
 import java.util.*;
 
 /**
  * {@link WaldoInitializer} ...
- * <p/>
+ * <p>
  * <strong>Thread Safety:</strong> instances of this class contain no mutable state and are therefore safe for
  * multithreaded access, provided the same is true of all dependencies provided via constructor.
- * <p/>
+ * <p>
  * Copyright 2014 Big Lake Systems, LLC.
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
@@ -48,25 +51,28 @@ public class WaldoInitializer implements WebApplicationInitializer
 {
     private static final Logger LOG = LoggerFactory.getLogger(WaldoInitializer.class);
 
-    private final PropertiesLoader m_propertiesLoader;
+    private final ServletInitializationUtils m_initializationUtils;
+    private final ResourceUtils m_resourceUtils;
 
     /**
      * Construct a {@link WaldoInitializer} instance.
      */
     public WaldoInitializer()
     {
-        this(PropertiesLoader.INSTANCE);
+        this(ServletInitializationUtils.INSTANCE, ResourceUtils.INSTANCE);
     }
 
     /**
      * Construct a {@link WaldoInitializer} instance.
      *
-     * @param propertiesLoader the {@link PropertiesLoader} component.
+     * @param initializationUtils the {@link ServletInitializationUtils} component.
+     * @param resourceUtils the {@link ResourceUtils} component.
      */
-    WaldoInitializer(final PropertiesLoader propertiesLoader)
+    WaldoInitializer(final ServletInitializationUtils initializationUtils, final ResourceUtils resourceUtils)
     {
         super();
-        m_propertiesLoader = propertiesLoader;
+        Assert.argumentNotNull("initializationUtils", m_initializationUtils = initializationUtils);
+        Assert.argumentNotNull("resourceUtils", m_resourceUtils = resourceUtils);
     }
 
     /**
@@ -75,21 +81,48 @@ public class WaldoInitializer implements WebApplicationInitializer
     @Override
     public void onStartup(final ServletContext context) throws ServletException
     {
-        /* Load and merge the application configuration. */
-        final Map<String, Object> configuration;
+        /* Load the bootstrap configuration. This will include items from the system parameters and servlet context,
+        but will not be the full, final configuration. This allows us to pull in additional configuration from sources
+        which require configuration themselves, such as an Amazon S3 bucket. Once those sources are configured, we can
+        load the final configuration. */
+        final PropertyResolver resolver = m_initializationUtils.loadBootstrapConfig(context);
+
+        /* Build a resource loader which is capable of loading from Amazon S3, for which Spring has no built-in
+        support. This will allow portions of the application to be pulled from S3 in a private manner, using credentials
+        from the bootstrap configuration. The loader will fall back to a standard ServletContextResourceLoader, so
+        configuration can also be loaded through any of the mechanisms which Spring supports internally. */
+        final ClassLoader classLoader = context.getClassLoader();
+        final ResourceLoader defaultLoader = new ServletContextResourceLoader(context);
+        final ResourceLoader s3Loader = m_resourceUtils.createAmazonS3ResourceLoader(classLoader,
+                new ConfiguredCredentialsSource(resolver));
+        final ResourceLoader configurationLoader =
+                m_resourceUtils.buildDispatchingResourceLoader(classLoader, defaultLoader)
+                        .addPrefixedLoader("s3", s3Loader)
+                        .toResourceLoader();
+        LOG.debug("Will load application configuration via resource loader {}.", configurationLoader);
+
+        /* Load the final application configuration. */
         final String locations =
                 StringUtils.trimToNull(context.getInitParameter(Constants.Context.CONFIGURATION_LOCATIONS));
         if (null == locations)
         {
-            configuration = Collections.emptyMap();
-            LOG.warn("Using empty configuration because context-param [configurationPropertiesLocations] was not set.");
+            throw new IllegalStateException(
+                    String.format("Configuration location(s) not found under context-param [%s].",
+                            Constants.Context.CONFIGURATION_LOCATIONS));
         }
-        else
+        final ResourcePatternResolver configurationResolver =
+                new ServletContextResourcePatternResolver(configurationLoader);
+        final Map<String, Object> configuration =
+                m_initializationUtils.loadMergedConfiguration(context, configurationResolver, locations);
+        LOG.info("Loaded {} configuration item(s) from location(s) [{}].", configuration.size(), locations);
+        if (LOG.isDebugEnabled())
         {
-            /* Load the configuration. */
-            final String[] patterns = locations.split("\\s*,\\s*");
-            configuration = loadConfiguration(context, patterns);
-            LOG.info("Loaded {} configuration key(s) from locations {}.", configuration.size(), patterns);
+            final StringBuilder builder = new StringBuilder();
+            for (final String nextKey : new TreeSet<>(configuration.keySet()))
+            {
+                builder.append("\n  [").append(nextKey).append("] => [").append(configuration.get(nextKey)).append("]");
+            }
+            LOG.debug("Merged configuration is:{}", builder.toString());
         }
 
         /* Initialize the root application context. */
@@ -148,61 +181,5 @@ public class WaldoInitializer implements WebApplicationInitializer
                 LOG.info("Added active profile [{}] for configuration [{}].", value, key);
             }
         }
-    }
-
-    /**
-     * Load the configuration properties file(s) from an array of locations. Same-named properties in locations listed
-     * <em>later</em> in the location array will override properties in locations listed <em>earlier</em> in the
-     * location array.
-     * <p/>
-     * A {@link ServletContextResourcePatternResolver} instance is used to resolve each individual location; locations
-     * can be in any format supported by that resolver.
-     *
-     * @param context the servlet context.
-     * @param locations the properties file locations.
-     * @return {@link Map} of {@link String} property names to {@link String} property values.
-     */
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> loadConfiguration(final ServletContext context, final String[] locations)
-    {
-        final Map<String, Object> result;
-        try
-        {
-            /* Create a pattern resolver and use it to locate all configuration resources. */
-            final ResourcePatternResolver resolver = new ServletContextResourcePatternResolver(context);
-            final List<Resource> allResources = new ArrayList<>();
-            for (final String nextLocation : locations)
-            {
-                final String location = ServletContextPropertyUtils.resolvePlaceholders(nextLocation, context, false);
-                final Resource[] resources = resolver.getResources(location);
-                if (null != resources && 0 != resources.length)
-                {
-                    allResources.addAll(Arrays.asList(resources));
-                }
-            }
-
-            /* Load and merge the configuration. */
-            final Properties properties = m_propertiesLoader.load(allResources);
-            result = Collections.unmodifiableMap(new HashMap<String, Object>((Map) properties));
-            if (LOG.isInfoEnabled())
-            {
-                /* Note: iterate over a throwaway TreeMap to sort by configuration key. */
-                final StringBuilder builder = new StringBuilder();
-                builder.append("Loaded the following configuration from resource(s) {}:");
-                for (final Map.Entry<String, Object> nextEntry : new TreeMap<>(result).entrySet())
-                {
-                    builder.append("\n  [").append(nextEntry.getKey()).append("] => [").append(nextEntry.getValue())
-                            .append("]");
-                }
-                LOG.info(builder.toString(), allResources);
-            }
-        }
-        catch (final IOException e)
-        {
-            throw new RuntimeException(String.format(
-                    "An error of type %s occurred while attempting to load the application configuration: %s",
-                    e.getClass().getName(), e.getMessage()), e);
-        }
-        return result;
     }
 }

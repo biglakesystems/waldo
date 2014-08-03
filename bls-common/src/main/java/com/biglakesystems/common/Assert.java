@@ -1,5 +1,7 @@
 package com.biglakesystems.common;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * {@link Assert} ...
  * <p/>
@@ -25,6 +27,21 @@ public class Assert
     private Assert()
     {
         super();
+    }
+
+    /**
+     * Assert that a method or constructor argument is not null or a blank string.
+     *
+     * @param name the argument name to include if an exception is thrown.
+     * @param value the argument value.
+     * @throws IllegalArgumentException if the argument value was {@code null}.
+     */
+    public static void argumentNotBlank(String name, String value) throws IllegalArgumentException
+    {
+        if (StringUtils.isBlank(value))
+        {
+            throw new IllegalArgumentException(String.format("Argument [%s] cannot be null or a blank string.", name));
+        }
     }
 
     /**
