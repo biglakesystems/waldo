@@ -28,7 +28,7 @@ dependencies {
             [group: "org.hibernate", name: "hibernate-entitymanager", version: hibernate_version],
             [group: "org.postgresql", name: "postgresql", version: postgresql_version],
             [group: "com.fasterxml.jackson.core", name: "jackson-databind", version: jackson_version],
-            [group: "commons-codec", name: "commons-codec", version: "1.9"]
+            [group: "commons-codec", name: "commons-codec", version: commons_codec_version]
     )
 
     providedCompile(
