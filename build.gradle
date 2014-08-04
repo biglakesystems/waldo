@@ -17,10 +17,10 @@ subprojects {
     }
 
     /* Emulate Maven "provided" scope. Remove this if/when http://issues.gradle.org/browse/GRADLE-784 is resolved. */
-//    configurations {
-//        provided
-//        compile.extendsFrom provided
-//    }
+    configurations {
+        provided
+        compile.extendsFrom provided
+    }
     /* End Emulate Maven "provided" scope. */
 
     dependencies {
