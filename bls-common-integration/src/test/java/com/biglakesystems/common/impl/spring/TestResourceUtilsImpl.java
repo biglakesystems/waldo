@@ -1,5 +1,7 @@
 package com.biglakesystems.common.impl.spring;
 
+import com.biglakesystems.common.impl.aws.S3ResourceLoader;
+import com.biglakesystems.common.security.CredentialsSource;
 import com.biglakesystems.common.spring.ResourceUtils;
 import org.junit.Test;
 import org.springframework.core.io.ResourceLoader;
@@ -46,8 +48,28 @@ public class TestResourceUtilsImpl
         final DispatchingResourceLoaderBuilderImpl builder =
                 (DispatchingResourceLoaderBuilderImpl) instance.buildDispatchingResourceLoader(mockClassLoader,
                         mockDefaultLoader);
+        assertNotNull(builder);
         assertSame(mockClassLoader, builder.getClassLoader());
         assertSame(mockDefaultLoader, builder.getDefaultLoader());
         verify(mockClassLoader);
+    }
+
+    /**
+     * Test the implementation of {@link ResourceUtils#createAmazonS3ResourceLoader(ClassLoader, CredentialsSource)}.
+     */
+    @Test
+    public void testCreateAmazonS3ResourceLoader()
+    {
+        final ClassLoader mockClassLoader = createMock(ClassLoader.class);
+        final CredentialsSource mockCredentialsSource = createMock(CredentialsSource.class);
+
+        /* Run the test and verify expectations. */
+        replay(mockClassLoader, mockCredentialsSource);
+        final ResourceUtils instance = new ResourceUtilsImpl();
+        final S3ResourceLoader loader = (S3ResourceLoader) instance.createAmazonS3ResourceLoader(mockClassLoader,
+                mockCredentialsSource);
+        assertSame(mockClassLoader, loader.getClassLoader());
+        assertSame(mockCredentialsSource, loader.getCredentialsSource());
+        verify(mockClassLoader, mockCredentialsSource);
     }
 }

@@ -83,12 +83,22 @@ public class S3ResourceLoader implements ResourceLoader
         catch (final EntryNotFoundException e)
         {
             throw new IllegalStateException(String.format(
-                    "Credentials for Amazon S3 bucket [%s] not found in credentials source %s.", bucket, m_source));
+                    "Credentials for Amazon S3 bucket [%s] not found in credentials source %s.", bucket, m_source), e);
         }
         final String key = matcher.group(2);
         final Resource result = new S3Resource(bucket, key, credentials);
         LOG.info("Returning Amazon S3 resource {} for location [{}].", result, location);
         return result;
+    }
+
+    /**
+     * For testing purposes only.
+     *
+     * @return {@link CredentialsSource} instance.
+     */
+    public CredentialsSource getCredentialsSource()
+    {
+        return m_source;
     }
 
     /**

@@ -1,21 +1,22 @@
 package com.biglakesystems.common.impl.aws;
 
 import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.S3Object;
 import com.biglakesystems.common.Assert;
 import com.biglakesystems.common.impl.StaticHelper;
 import com.biglakesystems.common.security.Credentials;
 import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * {@link S3Resource} ...
+ * {@link S3Resource} is an implementation of the {@link Resource} interface which can load a resource from an Amazon
+ * S3 bucket. The bucket, file key (path within the S3 bucket without leading slash) and credentials are configured via
+ * constructor.
  * <p>
  * Copyright 2014 Big Lake Systems, LLC.
  * <p>
@@ -132,9 +133,9 @@ class S3Resource extends AbstractResource
      */
     private S3Object openObject() throws AmazonS3Exception
     {
-        final AWSCredentials credentials = new BasicAWSCredentials(m_credentials.getPrincipal().toString(),
-                m_credentials.getCredentials().toString());
-        final AmazonS3 client = new AmazonS3Client(credentials);
+        final AWSCredentials credentials = m_staticHelper.BasicAWSCredentials_new(
+                m_credentials.getPrincipal().toString(), m_credentials.getCredentials().toString());
+        final AmazonS3 client = m_staticHelper.AmazonS3Client_new(credentials);
         S3Object result = null;
         try
         {
