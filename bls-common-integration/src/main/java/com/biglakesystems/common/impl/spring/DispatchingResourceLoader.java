@@ -100,10 +100,11 @@ class DispatchingResourceLoader implements ResourceLoader
                 else
                 {
                     final ResourceLoader loader = m_loadersByPrefix.get(prefix);
-                    result = loader.getResource(location);
+                    final String path = location.substring(prefix.length() + 1);
+                    result = loader.getResource(path);
                     foundPrefixedLoader = true;
-                    LOG.debug("Found prefixed resource loader {} for prefix [{}] from location [{}].", loader, prefix,
-                            location);
+                    LOG.debug("Found prefixed resource loader {} for prefix [{}] from location [{}] with path [{}].",
+                            loader, prefix, location, path);
                 }
             }
         }
