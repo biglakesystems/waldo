@@ -1,0 +1,50 @@
+Waldo Project
+IntelliJ IDEA Import Notes
+Updated 2014-08-08 for IntelliJ IDEA 13.x
+
+1  Clone Waldo project from GitHub @ https://github.com/biglakesystems/waldo.git
+2  When asked by IntelliJ "You have checked out an IntelliJ IDEA project file: [path to build.gradle] Would you like to open it?" click "Yes."
+3  When "Import Project from Gradle" dialog appears, accept defaults.
+   1  By default, "Use default gradle wrapper (recommended)" should be selected; this is the correct option.
+   2  Click "OK" to dismiss the Import dialog.
+4  Wait as the project is imported.
+5  When import is complete, the IntelliJ window will probably be empty. You may want to open the project view by clicking the "View" menu, 
+   then "Tool Windows," then "Project."
+6  Complete/fix project configuration by opening the Project Structure window ("File" menu, then "Project Structure...")
+   1  Under the "Project" page: 
+      1  Select an appropriate Java 7 or Java 8 SDK.
+      2  Set the "Project language level" to "7.0 - Diamonds, ARM, multi-catch etc."
+   2  Under the "Facets" page:
+      1  Select the "Web Gradle : waldo-webapp-[VERSION].war (waldo-webapp)" facet. 
+      2  Under "Web Resource Directories," click the add ("+") button and add the web resources directory:
+         1  Set "Web resource directory path:" to "[PROJECT_ROOT]/waldo-webapp/src/main/webapp"
+         2  Set "Relative path in deployment directory" to "/"
+         3  Click "OK" to dismiss the Web Resource Directory Path dialog.
+   3  Under the "Artifacts" page:
+      1  Select the "Gradle : com.biglakesystems.waldo:waldo-webapp : waldo-webapp-[VERSION].war (exploded)" artifact.
+      2  Check the "Build on make" checkbox (it should be CHECKED.) 
+   4  Click "OK" to dismiss the Project Structure dialog.
+   5  If/when asked "Language level changes will take effect on project reload. Would you like to reload project "waldo" now?" click "Yes."
+7  When the project reloads, yellow warnings may appear with the title "Spring Configuration Check." This can be ignored.
+   TODO: Add instructions for fully configuring the Spring facet. This is not really necessary, but would be nice.
+8  Create a Tomcat run configuration ("Run" menu, then "Edit Configurations...")
+   1  In the "Run/Debug Configurations" dialog, click the add ("+") button, then "Tomcat Server," then "Local."
+   2  Give the configuration a name, such as "Local Tomcat 7" or "Local Tomcat 8."
+   3  Select the appropriate Tomcat server in the "Application server:" selector.
+   4  Under the "Server" tab:
+      1  You may want to clear the "After launch [BROWSER]" to NOT automatically open a browser window after every deploy.
+      2  In "VM options," add "-Dwaldo.deployment_config_location=[PATH_TO_DEPLOYMENT_CONFIG]"
+         -  [PATH_TO_DEPLOYMENT_CONFIG] should be a Spring resource location string pointing to the appropriate deployment configuration
+            file, such as "classpath:META-INF/config/waldo-node-dev-localhost.properties" for a standard developer configuration.
+         -  Amazon S3 is supported using the format "s3:/[BUCKET_NAME]/[PATH_TO_DEPLOYMENT_CONFIG]". If S3 is to be used, then the S3 access 
+            key and secret key must be provided as additional VM arguments:
+            - "-Dwaldo.credentials.username.[BUCKET_NAME]=[Amazon S3 access key]"
+            - "-Dwaldo.credentials.password.[BUCKET_NAME]=[Amazon S3 secret key]"
+   5  Under the "Deployment" tab:
+      1  Click the add ("+") button, then "Artifact..."
+         1  Under the "Select Artifacts to Deploy" dialog:
+            1  Select the "Gradle : com.biglakesystems.waldo:waldo-webapp : waldo-webapp-[VERSION].war (exploded)" artifact.
+            2  In "Application context," enter "/waldo" (this is optional, and can be any valid deployment root string.)
+            3  Click "OK" to dismiss the "Select Artifacts to Deploy" dialog.
+   6  Click "OK" to dismiss the "Run/Debug Configurations" dialog.
+9  Test the configuration by clicking the "Run" menu, then "Debug..." then selecting the Tomcat configuration created in step 8.      
