@@ -1,9 +1,10 @@
-package waldo.impl.service.adds;
+package waldo.impl.daemon.adds;
 
 import org.junit.Test;
 import waldo.utility.network.HttpUtils;
 
 import java.lang.reflect.Constructor;
+import java.net.URI;
 import java.util.Collections;
 
 /**
@@ -43,7 +44,8 @@ public class TestAddsDataAcquirer
         final HttpUtils httpUtils = constructor.newInstance();
         final AddsDirectoryParser parser = new AddsDirectoryParserImpl();
         final AddsDataAcquirer instance = new AddsDataAcquirer(parser,
-                Collections.singletonList(new TafCacheCsvHandler()), httpUtils);
+                Collections.singletonList(new TafCacheCsvHandler()), httpUtils,
+                URI.create("http://www.aviationweather.gov/adds/dataserver_current/current/"));
         instance.acquire();
     }
 }

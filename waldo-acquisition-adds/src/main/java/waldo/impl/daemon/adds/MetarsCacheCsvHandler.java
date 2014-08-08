@@ -1,4 +1,6 @@
-package waldo.impl.service.adds;
+package waldo.impl.daemon.adds;
+
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * {@link TafCacheCsvHandler} ...
+ * {@link MetarsCacheCsvHandler} is an implementation of the {@link AddsContentParser} which parses METAR data from the
+ * FAA Aviation Digital Data Service.
  * <p>
  * Copyright 2014 Big Lake Systems, LLC.
  * <p>
@@ -19,12 +22,13 @@ import java.io.InputStreamReader;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
-class TafCacheCsvHandler implements AddsContentParser
+@Component
+class MetarsCacheCsvHandler implements AddsContentParser
 {
     /**
-     * Construct a {@link TafCacheCsvHandler} instance.
+     * Construct a {@link MetarsCacheCsvHandler} instance.
      */
-    TafCacheCsvHandler()
+    MetarsCacheCsvHandler()
     {
         super();
     }
@@ -49,6 +53,6 @@ class TafCacheCsvHandler implements AddsContentParser
     @Override
     public boolean supports(final AddsContent content)
     {
-        return "tafs.cache.csv.gz".equals(content.getFileName());
+        return "metars.cache.csv.gz".equals(content.getFileName());
     }
 }

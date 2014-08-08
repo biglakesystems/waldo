@@ -1,4 +1,4 @@
-package waldo.impl.service.adds;
+package waldo.impl.daemon.adds;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

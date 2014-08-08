@@ -1,4 +1,4 @@
-package waldo.impl.service.adds;
+package waldo.impl.daemon.adds;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,7 @@ import java.util.List;
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
+@Component
 class AddsDirectoryParserImpl implements AddsDirectoryParser
 {
     private static final Logger LOG = LoggerFactory.getLogger(AddsDirectoryParserImpl.class);

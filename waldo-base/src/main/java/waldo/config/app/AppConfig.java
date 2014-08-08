@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * specific language governing permissions and limitations under the License.
  */
 @Configuration
-@ComponentScan(basePackages = { "waldo.impl.facade", "waldo.impl.service", "waldo.impl.utility" })
+@ComponentScan(basePackages = { "waldo.impl.daemon", "waldo.impl.facade", "waldo.impl.daemon", "waldo.impl.utility" })
 @SuppressWarnings("unused")
 public class AppConfig
 {

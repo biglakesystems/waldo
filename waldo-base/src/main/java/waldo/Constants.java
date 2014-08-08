@@ -55,6 +55,12 @@ public interface Constants
     interface Profiles
     {
         /**
+         * Profile which is active when background data acquisition daemons should be enabled. This profile would, for
+         * example, be active for a production or staging deployment, but perhaps not for a local developer deployment.
+         */
+        String ACQUISITION_ENABLED = "waldo.profile.acquisition.enabled";
+
+        /**
          * Profile which is active when the application should create its own internal database connection pool, rather
          * than having one supplied by the container via JNDI.
          */

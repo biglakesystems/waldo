@@ -1,4 +1,4 @@
-package waldo.impl.service.adds;
+package waldo.impl.daemon.adds;
 
 import org.joda.time.DateTime;
 import org.junit.Test;

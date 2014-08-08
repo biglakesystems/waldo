@@ -176,9 +176,12 @@ public class WaldoInitializer implements WebApplicationInitializer
             final String key = nextConfiguration.getKey();
             if (key.startsWith(Constants.Profiles.PROFILE_CONFIGURATION_PREFIX))
             {
-                final String value = ObjectUtils.toString(nextConfiguration.getValue());
-                environment.addActiveProfile(value);
-                LOG.info("Added active profile [{}] for configuration [{}].", value, key);
+                final String value = StringUtils.trimToNull(ObjectUtils.toString(nextConfiguration.getValue()));
+                if (null != value)
+                {
+                    environment.addActiveProfile(value);
+                    LOG.info("Added active profile [{}] for configuration [{}].", value, key);
+                }
             }
         }
     }
